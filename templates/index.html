@@ -1,0 +1,54 @@
+<html>
+  <head>
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+   <script type="text/javascript">
+        google.charts.load('current', {'packages':['gauge']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        var datos = JSON.parse('{{ datos| tojson | safe}}');
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['C º', datos.temperatura],
+                [datos.direccion, datos.vientos]
+            ]);
+
+            var options = {
+                width: 600, height: 180,
+                redFrom: 40, redTo: 60,
+                yellowFrom:30, yellowTo: 40,
+                majorTicks: 5,
+                minorTicks: 5,
+                max: 60, min: 0
+            };
+
+
+            var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+
+            chart.draw(data, options);
+
+            setInterval(function() {
+                data.setValue(0,1,datos.temperatura);
+                chart.draw(data, options);
+            },1000);
+            setInterval(function() {
+                data.setValue(1,1,datos.vientos);
+                chart.draw(data, options);
+            },1000);
+
+        }
+        function mostrardatos(){
+            document.getElementById("idciudad").innerHTML = datos.ciudad;
+        }
+    </script>
+  </head>
+  <body onload="mostrardatos()">
+    <br />
+    <b>Temperatura - Velocidad del Viento</b>
+    <h1>
+    <div id="idciudad" style="text-align: center;width: 170px;"></div>
+    </h1><br />
+    <div id="chart_div" style="width: 600px; height: 180px;"></div>
+  </body>
+</html>
